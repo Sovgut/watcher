@@ -1,0 +1,39 @@
+{
+	"name": "@sovgut/watcher",
+	"version": "1.0.0",
+	"main": "dist/watcher.umd.js",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build"
+	},
+	"author": {
+		"email": "sergey.sovgut@outlook.com",
+		"name": "Serhii Sovhut",
+		"url": "https://github.com/Sovgut"
+	},
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/Sovgut/watcher"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"bugs": {
+		"url": "https://github.com/Sovgut/watcher/issues",
+		"email": "sergey.sovgut@outlook.com"
+	},
+	"homepage": "https://github.com/Sovgut/watcher",
+	"dependencies": {
+		"axios": "^1.5.1",
+		"comlink": "^4.4.1",
+		"events": "^3.3.0",
+		"localforage": "^1.10.0",
+		"luxon": "^3.4.3",
+		"nanoid": "^5.0.1"
+	},
+	"devDependencies": {
+		"typescript": "^5.2.2",
+		"vite": "^4.4.9"
+	}
+}
