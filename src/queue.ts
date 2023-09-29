@@ -1,10 +1,10 @@
-import {MIN_RATE_LIMIT} from "./constants.js";
-import {getItems} from "./database.js";
-import {QueueState} from "./enums.js";
-import {emit} from "./observer.js";
-import {pipe} from "./pipeline.js";
+import {MIN_RATE_LIMIT} from "./constants";
+import {getItems} from "./database";
+import {QueueState} from "./enums";
+import {emit} from "./observer";
+import {pipe} from "./pipeline";
 
-import type {QueueEntry} from "./types.js";
+import type {QueueEntry} from "./types";
 
 let queue: QueueEntry[] = [];
 let index = 0;

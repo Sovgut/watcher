@@ -1,12 +1,12 @@
-import {MIN_RATE_LIMIT} from "./constants.js";
-import {getItem, getItems, setItem} from "./database.js";
-import {Platform, Status} from "./enums.js";
-import {load as OLXLoad} from "./modules/olx/index.js";
-import {emit} from "./observer.js";
+import {MIN_RATE_LIMIT} from "./constants";
+import {getItem, getItems, setItem} from "./database";
+import {Platform, Status} from "./enums";
+import {load as OLXLoad} from "./modules/olx/index";
+import {emit} from "./observer";
 
-import type {EntityOffer, QueueEntry} from "./types.js";
-import {hashUrl} from "./utils/hash-url.js";
-import {requestWorker} from "./workers/index.js";
+import type {EntityOffer, QueueEntry} from "./types";
+import {hashUrl} from "./utils/hash-url";
+import {requestWorker} from "./workers";
 
 const PLATFORMS: Record<Platform, (parent: Document) => EntityOffer[]> = {
 	[Platform.Olx]: OLXLoad,

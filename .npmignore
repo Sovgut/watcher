@@ -2,4 +2,5 @@
 /src
 .gitignore
 tsconfig.json
+tsconfig.node.json
 vite.config.js

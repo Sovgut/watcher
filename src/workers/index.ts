@@ -1,7 +1,7 @@
 import {wrap} from "comlink";
 
-import RequestInstanceWorker from "./request.worker.js?worker";
-
-import type {RequestWorker} from "../workers/request.worker.js";
+import type {RequestWorker} from "./request.worker";
+// @ts-ignore
+import RequestInstanceWorker from "./request.worker?worker&inline";
 
 export const requestWorker = wrap(new RequestInstanceWorker()) as RequestWorker;

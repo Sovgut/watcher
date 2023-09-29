@@ -1,9 +1,19 @@
 {
 	"name": "@sovgut/watcher",
 	"version": "1.0.0",
-	"main": "dist/watcher.umd.js",
+	"main": "./dist/watcher.mjs",
+	"module": "./dist/watcher.mjs",
+	"types": "./index.d.ts",
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"import": "./dist/watcher.mjs",
+			"types": "./index.d.ts"
+		}
+	},
 	"scripts": {
-		"dev": "vite",
 		"build": "vite build"
 	},
 	"author": {
@@ -16,23 +26,20 @@
 		"type": "git",
 		"url": "https://github.com/Sovgut/watcher"
 	},
-	"publishConfig": {
-		"access": "public"
-	},
 	"bugs": {
 		"url": "https://github.com/Sovgut/watcher/issues",
 		"email": "sergey.sovgut@outlook.com"
 	},
 	"homepage": "https://github.com/Sovgut/watcher",
-	"dependencies": {
+	"devDependencies": {
+		"@types/events": "^3.0.1",
+		"@types/luxon": "^3.3.2",
 		"axios": "^1.5.1",
 		"comlink": "^4.4.1",
 		"events": "^3.3.0",
 		"localforage": "^1.10.0",
 		"luxon": "^3.4.3",
-		"nanoid": "^5.0.1"
-	},
-	"devDependencies": {
+		"nanoid": "^5.0.1",
 		"typescript": "^5.2.2",
 		"vite": "^4.4.9"
 	}

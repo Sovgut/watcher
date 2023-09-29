@@ -1,6 +1,6 @@
 import {DateTime} from "luxon";
 
-import type {EntityOffer, Price} from "../../../types.js";
+import type {EntityOffer, Price} from "../../../types";
 
 export function anchor(parent: Element): string {
 	const child = parent.querySelector("a");

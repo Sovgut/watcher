@@ -1,8 +1,8 @@
 import {DateTime} from "luxon";
 
-import {Frequency} from "../../../enums.js";
+import {Frequency} from "../../../enums";
 
-import type {EntityOffer, Salary} from "../../../types.js";
+import type {EntityOffer, Salary} from "../../../types";
 
 function hasSalary(parent: Element): boolean {
 	const child = parent.querySelector(".jobs-ad-card > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) p");

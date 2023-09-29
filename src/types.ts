@@ -1,4 +1,4 @@
-import type {EntityStatus, Frequency, Offer, Platform, QueueState, Status} from "./enums.js";
+import type {EntityStatus, Frequency, Offer, Platform, QueueState, Status} from "./enums";
 
 export interface QueueEntry {
 	url: string;

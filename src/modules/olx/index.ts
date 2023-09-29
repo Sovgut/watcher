@@ -1,11 +1,11 @@
-import * as AdvertParser from "./parsers/advert.offer.js";
-import * as JobParser from "./parsers/job.offer.js";
+import * as AdvertParser from "./parsers/advert.offer";
+import * as JobParser from "./parsers/job.offer";
 
-import {EntityStatus, Offer} from "../../enums.js";
-import {hashUrl} from "../../utils/hash-url.js";
-import {detectType} from "./utils/detect-type.js";
+import {EntityStatus, Offer} from "../../enums";
+import {hashUrl} from "../../utils/hash-url";
+import {detectType} from "./utils/detect-type";
 
-import type {EntityOffer, Price, Salary} from "../../types.js";
+import type {EntityOffer, Price, Salary} from "../../types";
 
 export function load(parent: Document) {
 	const list: EntityOffer[] = [];

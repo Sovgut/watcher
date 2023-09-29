@@ -1,6 +1,6 @@
 import {expose} from "comlink";
 
-import {request} from "../request.js";
+import {request} from "../request";
 
 const api = {request};
 

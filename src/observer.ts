@@ -1,6 +1,6 @@
 import {EventEmitter} from "events";
 
-import type {EventCallback} from "./types.js";
+import type {EventCallback} from "./types";
 
 const instance = new EventEmitter();
 
@@ -10,7 +10,7 @@ const instance = new EventEmitter();
  * @param {Event} event The event to listen to.
  * @param {EventCallback[Event]} callback The callback function to execute when the event is triggered.
  */
-export function on<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]) {
+export function on<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]): void {
 	instance.on(event, callback);
 }
 
@@ -20,7 +20,7 @@ export function on<Event extends keyof EventCallback>(event: Event, callback: Ev
  * @param {Event} event The event to listen to.
  * @param {EventCallback[Event]} callback The callback function to execute when the event is triggered.
  */
-export function once<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]) {
+export function once<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]): void {
 	instance.once(event, callback);
 }
 
@@ -30,7 +30,7 @@ export function once<Event extends keyof EventCallback>(event: Event, callback: 
  * @param {Event} event The event to remove the listener from.
  * @param {EventCallback[Event]} callback The callback function to remove as a listener for the event.
  */
-export function off<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]) {
+export function off<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]): void {
 	instance.off(event, callback);
 }
 
@@ -40,6 +40,6 @@ export function off<Event extends keyof EventCallback>(event: Event, callback: E
  * @param {Event} event The event to emit.
  * @param {unknown} [data] Optional data to pass along with the event emission.
  */
-export function emit<Event extends keyof EventCallback>(event: Event, ...data: unknown[]) {
+export function emit<Event extends keyof EventCallback>(event: Event, ...data: unknown[]): void {
 	instance.emit(event, ...data);
 }
