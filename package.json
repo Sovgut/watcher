@@ -1,6 +1,6 @@
 {
 	"name": "@sovgut/watcher",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"main": "./dist/watcher.mjs",
 	"module": "./dist/watcher.mjs",
 	"types": "./types/index.d.ts",
