@@ -1,9 +1,9 @@
 {
 	"name": "@sovgut/watcher",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"main": "./dist/watcher.mjs",
 	"module": "./dist/watcher.mjs",
-	"types": "./types/index.d.ts",
+	"types": "./index.d.ts",
 	"files": [
 		"dist",
 		"index.d.ts",
@@ -12,7 +12,7 @@
 	"exports": {
 		".": {
 			"import": "./dist/watcher.mjs",
-			"types": "./types/index.d.ts"
+			"types": "./index.d.ts"
 		}
 	},
 	"scripts": {
