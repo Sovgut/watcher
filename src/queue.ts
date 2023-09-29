@@ -1,6 +1,6 @@
 import {MIN_RATE_LIMIT} from "./constants";
 import {getItems} from "./database";
-import {QueueState} from "./enums";
+import {SchedulerState} from "./enums";
 import {emit} from "./observer";
 import {pipe} from "./pipeline";
 
@@ -53,7 +53,7 @@ export function enable() {
 	if (!timeoutId) {
 		timeoutId = startInterval();
 
-		emit("queue", QueueState.Enabled, queue);
+		emit("scheduler", SchedulerState.Enabled, queue);
 		emit("next", queue[index], queue);
 
 		if (queue[index]) {
@@ -64,17 +64,12 @@ export function enable() {
 
 export function disable() {
 	if (timeoutId) {
-		// Clears the timer
 		clearTimeout(timeoutId);
-
-		// Release the id
 		timeoutId = undefined;
 
-		// Reset the tick
 		tick = 0;
 
-		// Raise the event about disabled state and resetting an tick
-		emit("queue", QueueState.Disabled, queue);
+		emit("scheduler", SchedulerState.Disabled, queue);
 		emit("tick", tick);
 	}
 }
@@ -86,7 +81,7 @@ export function addEntry(entry: QueueEntry) {
 		queue.push({...entry});
 	}
 
-	emit("queue", isEnabled() ? QueueState.Enabled : QueueState.Disabled, queue);
+	emit("scheduler", isEnabled() ? SchedulerState.Enabled : SchedulerState.Disabled, queue);
 }
 
 export function removeEntry(entry: QueueEntry | string) {
@@ -95,5 +90,5 @@ export function removeEntry(entry: QueueEntry | string) {
 	queue = queue.filter((e) => e.url === url);
 	index = 0;
 
-	emit("queue", isEnabled() ? QueueState.Enabled : QueueState.Disabled, queue);
+	emit("scheduler", isEnabled() ? SchedulerState.Enabled : SchedulerState.Disabled, queue);
 }

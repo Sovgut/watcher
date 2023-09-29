@@ -1,9 +1,3 @@
-/**
- * Hashes the provided URL.
- *
- * @param {string} [url] The URL to hash.
- * @returns {string} The hashed URL.
- */
 export function hashUrl(url?: string): string {
 	const value = url ?? Math.random().toString();
 	let hash = 0;

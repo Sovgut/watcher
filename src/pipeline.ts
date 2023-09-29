@@ -1,6 +1,6 @@
 import {MIN_RATE_LIMIT} from "./constants";
 import {getItem, getItems, setItem} from "./database";
-import {Platform, Status} from "./enums";
+import {Platform, WatcherStatus} from "./enums";
 import {load as OLXLoad} from "./modules/olx/index";
 import {emit} from "./observer";
 
@@ -38,21 +38,21 @@ export async function pipe(entry: QueueEntry) {
 			return emit("list", list, entry);
 		}
 
-		emit("status", Status.Fetching, entry);
+		emit("status", WatcherStatus.Fetching, entry);
 
 		const html = await requestWorker.request(entry.url);
 		if (!html) {
-			emit("status", Status.Error, entry);
+			emit("status", WatcherStatus.Error, entry);
 
 			return;
 		}
 
-		emit("status", Status.Processing, entry);
+		emit("status", WatcherStatus.Processing, entry);
 
 		const parser = new DOMParser();
 		const list = PLATFORMS[entry.platform](parser.parseFromString(html, "text/html"));
 
-		emit("status", Status.Saving);
+		emit("status", WatcherStatus.Saving);
 
 		const createdEntities: EntityOffer[] = [];
 
@@ -70,10 +70,10 @@ export async function pipe(entry: QueueEntry) {
 			emit("new", createdEntities, entry);
 			emit("list", list, entry);
 			emit("count", createdEntities.length, entry);
-			emit("status", Status.Idle, entry);
+			emit("status", WatcherStatus.Idle, entry);
 		}
 	} catch (error) {
 		console.error(error);
-		emit("status", Status.Error, entry);
+		emit("status", WatcherStatus.Error, entry);
 	}
 }

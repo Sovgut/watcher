@@ -1,4 +1,4 @@
-import type {EntityStatus, Frequency, Offer, Platform, QueueState, Status} from "./enums";
+import type {EntityStatus, Offer, Platform, SalaryFrequency, SchedulerState, WatcherStatus} from "./enums";
 
 export interface QueueEntry {
 	url: string;
@@ -7,18 +7,18 @@ export interface QueueEntry {
 }
 
 export type EventCallback = {
-	tick: (value: number) => void;
-	queue: (state: QueueState, total: QueueEntry[]) => void;
+	tick: (percentage: number) => void;
+	scheduler: (state: SchedulerState, total: QueueEntry[]) => void;
 	next: (next: QueueEntry, total: QueueEntry[]) => void;
-	count: (count: number, entry: QueueEntry) => void;
-	status: (status: Status, entry: QueueEntry) => void;
-	new: (entities: EntityOffer[], entry: QueueEntry) => void;
-	list: (entities: EntityOffer[], entry: QueueEntry) => void;
+	count: (count: number, currentEntry: QueueEntry) => void;
+	status: (status: WatcherStatus, currentEntry: QueueEntry) => void;
+	new: (entities: EntityOffer[], currentEntry: QueueEntry) => void;
+	list: (entities: EntityOffer[], currentEntry: QueueEntry) => void;
 };
 
 export type Salary = {
 	from: number;
-	frequency: Frequency;
+	frequency: SalaryFrequency;
 	to?: number;
 	currency?: string;
 };

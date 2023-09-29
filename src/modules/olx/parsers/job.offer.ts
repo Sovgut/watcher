@@ -1,6 +1,6 @@
 import {DateTime} from "luxon";
 
-import {Frequency} from "../../../enums";
+import {SalaryFrequency} from "../../../enums";
 
 import type {EntityOffer, Salary} from "../../../types";
 
@@ -69,7 +69,7 @@ export function location(parent: Element): string {
 export function salary(parent: Element): Salary {
 	const salary: Salary = {
 		from: 0,
-		frequency: Frequency.Monthly,
+		frequency: SalaryFrequency.Monthly,
 	};
 
 	const child = parent.querySelector(".jobs-ad-card > div:nth-of-type(2) > div > div > div:nth-of-type(1) p");
@@ -99,11 +99,11 @@ export function salary(parent: Element): Salary {
 
 			if (matches[5]) {
 				if (["за месяц", "за місяць"].includes(matches[5].replace(/\s/g, String()))) {
-					salary.frequency = Frequency.Monthly;
+					salary.frequency = SalaryFrequency.Monthly;
 				}
 
 				if (["за час", "за годину"].includes(matches[5].replace(/\s/g, String()))) {
-					salary.frequency = Frequency.Hourly;
+					salary.frequency = SalaryFrequency.Hourly;
 				}
 			}
 		}
@@ -123,11 +123,11 @@ export function salary(parent: Element): Salary {
 
 		if (matches[3]) {
 			if (["за месяц", "за місяць"].includes(matches[3].replace(/\s/g, String()))) {
-				salary.frequency = Frequency.Monthly;
+				salary.frequency = SalaryFrequency.Monthly;
 			}
 
 			if (["за час", "за годину"].includes(matches[3].replace(/\s/g, String()))) {
-				salary.frequency = Frequency.Hourly;
+				salary.frequency = SalaryFrequency.Hourly;
 			}
 		}
 	}
