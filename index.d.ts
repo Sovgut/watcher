@@ -211,9 +211,11 @@ export type EventCallback = {
 };
 
 /**
- * The Watcher module provides functionality for managing database operations, observing events, and scheduling tasks.
- * It exposes functions for performing these operations.
- * @namespace Watcher
+ * The Watcher module provides functionality for web page parsing based on provided entries (platform and URL),
+ * creating models of offers (such as advertisements and jobs), caching these models in IndexedDB,
+ * triggering observer events that can be listened to by frontend applications,
+ * offering commands to control the library's state, and providing methods for accessing the database.
+ * This library is designed to assist in web scraping, data modeling, and data management within applications.
  */
 export declare module Watcher {
 	/**
