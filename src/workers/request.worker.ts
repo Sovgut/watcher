@@ -1,5 +1,6 @@
 import {expose} from "comlink";
 
+// Here is not allowed a path alias, use relative path instead.
 import {request} from "../request";
 
 const api = {request};

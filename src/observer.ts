@@ -1,21 +1,31 @@
-import {EventEmitter} from "events";
+import EventEmitter from "eventemitter3";
 
-import type {EventCallback} from "./types";
+import type {EventCallback} from "source:types";
 
-const instance = new EventEmitter();
+export class Observer {
+	private emitter = new EventEmitter();
 
-export function on<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]): void {
-	instance.on(event, callback);
-}
+	public on<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]): void {
+		this.emitter.on(event, callback);
+	}
 
-export function once<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]): void {
-	instance.once(event, callback);
-}
+	public once<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]): void {
+		this.emitter.once(event, callback);
+	}
 
-export function off<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]): void {
-	instance.off(event, callback);
-}
+	public off<Event extends keyof EventCallback>(event: Event, callback: EventCallback[Event]): void {
+		this.emitter.off(event, callback);
+	}
 
-export function emit<Event extends keyof EventCallback>(event: Event, ...data: unknown[]): void {
-	instance.emit(event, ...data);
+	public emit<Event extends keyof EventCallback>(event: Event, data: Parameters<EventCallback[Event]>[0]): void {
+		this.emitter.emit(event, data);
+	}
+
+	public listenerCount<Event extends keyof EventCallback>(event: Event): number {
+		return this.emitter.listenerCount(event);
+	}
+
+	public removeAllListeners<Event extends keyof EventCallback>(event?: Event): void {
+		this.emitter.removeAllListeners(event);
+	}
 }

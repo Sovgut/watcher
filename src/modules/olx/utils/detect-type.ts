@@ -1,10 +1,10 @@
-import {Offer} from "../../../enums";
+import {OfferKind} from "source:enums";
 
-export function detectType(parent: Document): Offer {
+export function detectType(parent: Document): OfferKind {
 	const isJobOffers = parent.getElementsByClassName("jobs-ad-card");
 	if (isJobOffers.length > 0) {
-		return Offer.Job;
+		return OfferKind.Job;
 	}
 
-	return Offer.Advert;
+	return OfferKind.Advert;
 }

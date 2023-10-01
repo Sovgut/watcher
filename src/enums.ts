@@ -7,7 +7,7 @@ export enum SchedulerState {
 	Enabled,
 }
 
-export enum EntityStatus {
+export enum OfferStatus {
 	Visited,
 	New,
 }
@@ -20,7 +20,7 @@ export enum WatcherStatus {
 	Error,
 }
 
-export enum Offer {
+export enum OfferKind {
 	Job,
 	Advert,
 }

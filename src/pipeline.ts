@@ -1,79 +1,107 @@
-import {MIN_RATE_LIMIT} from "./constants";
-import {getItem, getItems, setItem} from "./database";
-import {Platform, WatcherStatus} from "./enums";
-import {load as OLXLoad} from "./modules/olx/index";
-import {emit} from "./observer";
+import {MIN_RATE_LIMIT} from "source:constants";
+import {Platform, WatcherStatus} from "source:enums";
+import {observer} from "source:instances";
+import {load as OLXLoad} from "source:modules/olx";
+import {SCHEDULER_QUEUE} from "source:scheduler";
+import {hashUrl} from "source:utils/hash-url";
+import {requestWorker} from "source:workers";
 
-import type {EntityOffer, QueueEntry} from "./types";
-import {hashUrl} from "./utils/hash-url";
-import {requestWorker} from "./workers";
+import {OffersDatabase, RateLimitDatabase} from "source:database";
+import type {Offer, Resource} from "source:types";
 
-const PLATFORMS: Record<Platform, (parent: Document) => EntityOffer[]> = {
+const PLATFORMS: Record<Platform, (parent: Document) => Offer[]> = {
 	[Platform.Olx]: OLXLoad,
 };
 
-export async function isLimited(entry: QueueEntry) {
-	const id = hashUrl(entry.url);
-	const record = await getItem<string>("rate-limit", id);
+export class Pipeline {
+	private async isResourceRateLimited(resource: Resource): Promise<boolean> {
+		const id = hashUrl(resource.url);
+		const databaseInstance = new RateLimitDatabase();
+		const timestamp = await databaseInstance.limits.get(id);
 
-	if (record) {
-		const at = new Date(Number(record));
-		const diffInSeconds = Date.now() - at.getTime();
+		if (timestamp) {
+			const at = new Date(Number(timestamp));
+			const diffInSeconds = Date.now() - at.getTime();
 
-		if (diffInSeconds < MIN_RATE_LIMIT) {
-			return true;
-		}
-	}
-
-	await setItem("rate-limit", id, Date.now());
-
-	return false;
-}
-
-export async function pipe(entry: QueueEntry) {
-	try {
-		if (await isLimited(entry)) {
-			const list = await getItems(entry.url);
-
-			return emit("list", list, entry);
-		}
-
-		emit("status", WatcherStatus.Fetching, entry);
-
-		const html = await requestWorker.request(entry.url);
-		if (!html) {
-			emit("status", WatcherStatus.Error, entry);
-
-			return;
-		}
-
-		emit("status", WatcherStatus.Processing, entry);
-
-		const parser = new DOMParser();
-		const list = PLATFORMS[entry.platform](parser.parseFromString(html, "text/html"));
-
-		emit("status", WatcherStatus.Saving);
-
-		const createdEntities: EntityOffer[] = [];
-
-		for (const item of list) {
-			if (!(await getItem(entry.url, item.id.toString()))) {
-				await setItem(entry.url, item.id.toString(), item);
-
-				createdEntities.push(item);
+			if (diffInSeconds < MIN_RATE_LIMIT) {
+				return true;
 			}
 		}
 
-		{
-			const list = await getItems(entry.url);
+		await databaseInstance.limits.put({id, timestamp: Date.now()});
 
-			emit("new", createdEntities, entry);
-			emit("list", list, entry);
-			emit("count", createdEntities.length, entry);
-			emit("status", WatcherStatus.Idle, entry);
+		return false;
+	}
+
+	public async process(resource: Resource): Promise<void> {
+		try {
+			const databaseInstance = new OffersDatabase(resource.url);
+
+			if (await this.isResourceRateLimited(resource)) {
+				return;
+			}
+
+			observer.emit("status", {
+				status: WatcherStatus.Fetching,
+				resource: resource,
+				queue: SCHEDULER_QUEUE,
+			});
+
+			const html = await requestWorker.request(resource.url);
+			if (!html) {
+				observer.emit("status", {
+					status: WatcherStatus.Error,
+					resource: resource,
+					queue: SCHEDULER_QUEUE,
+				});
+
+				return;
+			}
+
+			observer.emit("status", {
+				status: WatcherStatus.Processing,
+				resource: resource,
+				queue: SCHEDULER_QUEUE,
+			});
+
+			const parser = new DOMParser();
+			const offers = PLATFORMS[resource.platform](parser.parseFromString(html, "text/html"));
+
+			observer.emit("status", {
+				status: WatcherStatus.Saving,
+				resource: resource,
+				queue: SCHEDULER_QUEUE,
+			});
+
+			const newOffers: Offer[] = [];
+
+			for (const offer of offers) {
+				if (!(await databaseInstance.offers.get(offer.id))) {
+					await databaseInstance.offers.put(offer, offer.id);
+
+					newOffers.push(offer);
+				}
+			}
+
+			{
+				observer.emit("new", {
+					offers: newOffers,
+					resource: resource,
+					queue: SCHEDULER_QUEUE,
+				});
+				observer.emit("status", {
+					status: WatcherStatus.Idle,
+					resource: resource,
+					queue: SCHEDULER_QUEUE,
+				});
+			}
+		} catch (error) {
+			console.error(error);
+			observer.emit("status", {
+				status: WatcherStatus.Error,
+				resource: resource,
+				queue: SCHEDULER_QUEUE,
+			});
 		}
-	} catch (error) {
-		console.error(error);
-		emit("status", WatcherStatus.Error, entry);
 	}
 }

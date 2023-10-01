@@ -1,8 +1,8 @@
 import {DateTime} from "luxon";
 
-import {SalaryFrequency} from "../../../enums";
+import {SalaryFrequency} from "source:enums";
 
-import type {EntityOffer, Salary} from "../../../types";
+import type {Offer, OfferSalary} from "source:types";
 
 function hasSalary(parent: Element): boolean {
 	const child = parent.querySelector(".jobs-ad-card > div:nth-of-type(2) > div:nth-of-type(1) > div:nth-of-type(1) > div:nth-of-type(1) p");
@@ -66,8 +66,8 @@ export function location(parent: Element): string {
 	return text.trim();
 }
 
-export function salary(parent: Element): Salary {
-	const salary: Salary = {
+export function salary(parent: Element): OfferSalary {
+	const salary: OfferSalary = {
 		from: 0,
 		frequency: SalaryFrequency.Monthly,
 	};
@@ -135,7 +135,7 @@ export function salary(parent: Element): Salary {
 	return salary;
 }
 
-export function datetime(parent: Element): string {
+export function dateTime(parent: Element): string {
 	const child = parent.querySelector(".jobs-ad-card > div:nth-of-type(4) p");
 	if (!child) {
 		return new Date().toISOString();
@@ -167,10 +167,10 @@ export function datetime(parent: Element): string {
 	}
 }
 
-export function test(entity: EntityOffer): boolean {
+export function test(entity: Offer): boolean {
 	let isCorrupted = false;
 
-	if (entity.datetime === String()) {
+	if (entity.dateTime === String()) {
 		isCorrupted = true;
 	}
 

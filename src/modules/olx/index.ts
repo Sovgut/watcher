@@ -1,14 +1,14 @@
-import * as AdvertParser from "./parsers/advert.offer";
-import * as JobParser from "./parsers/job.offer";
+import * as AdvertParser from "source:modules/olx/parsers/advert.offer";
+import * as JobParser from "source:modules/olx/parsers/job.offer";
 
-import {EntityStatus, Offer} from "../../enums";
-import {hashUrl} from "../../utils/hash-url";
-import {detectType} from "./utils/detect-type";
+import {OfferKind, OfferStatus} from "source:enums";
+import {detectType} from "source:modules/olx/utils/detect-type";
+import {hashUrl} from "source:utils/hash-url";
 
-import type {EntityOffer, Price, Salary} from "../../types";
+import type {Offer, OfferPrice, OfferSalary} from "source:types";
 
-export function load(parent: Document) {
-	const list: EntityOffer[] = [];
+export function load(parent: Document): Offer[] {
+	const list: Offer[] = [];
 	const type = detectType(parent);
 
 	const elements = parent.querySelectorAll('[data-cy="l-card"]');
@@ -16,13 +16,13 @@ export function load(parent: Document) {
 		return [];
 	}
 
-	if (type === Offer.Job) {
+	if (type === OfferKind.Job) {
 		for (const element of elements) {
 			list.push(new JobOffer(type, element));
 		}
 	}
 
-	if (type === Offer.Advert) {
+	if (type === OfferKind.Advert) {
 		for (const element of elements) {
 			list.push(new AdvertOffer(type, element));
 		}
@@ -31,51 +31,51 @@ export function load(parent: Document) {
 	return list;
 }
 
-class JobOffer implements EntityOffer {
+class JobOffer implements Offer {
 	public id: string;
-	public type: Offer;
+	public type: OfferKind;
 	public title: string;
 	public anchor: string;
 	public location: string;
-	public datetime: string;
-	public salary: Salary;
+	public dateTime: string;
+	public salary: OfferSalary;
 
-	public status = EntityStatus.New;
+	public status = OfferStatus.New;
 	public hasMissingInfo = false;
 
-	constructor(type: Offer, parent: Element) {
+	constructor(type: OfferKind, parent: Element) {
 		this.type = type;
 
 		this.anchor = JobParser.anchor(parent);
 		this.title = JobParser.title(parent);
 		this.location = JobParser.location(parent);
 		this.salary = JobParser.salary(parent);
-		this.datetime = JobParser.datetime(parent);
+		this.dateTime = JobParser.dateTime(parent);
 		this.hasMissingInfo = JobParser.test(this);
 
 		this.id = hashUrl(this.anchor);
 	}
 }
 
-class AdvertOffer implements EntityOffer {
+class AdvertOffer implements Offer {
 	public id: string;
-	public type: Offer;
+	public type: OfferKind;
 	public title: string;
 	public anchor: string;
 	public location: string;
-	public datetime: string;
-	public price: Price;
+	public dateTime: string;
+	public price: OfferPrice;
 
-	public status = EntityStatus.New;
+	public status = OfferStatus.New;
 	public hasMissingInfo = false;
 
-	constructor(type: Offer, parent: Element) {
+	constructor(type: OfferKind, parent: Element) {
 		this.type = type;
 
 		this.anchor = AdvertParser.anchor(parent);
 		this.title = AdvertParser.title(parent);
 		this.location = AdvertParser.location(parent);
-		this.datetime = AdvertParser.datetime(parent);
+		this.dateTime = AdvertParser.dateTime(parent);
 		this.price = AdvertParser.price(parent);
 		this.hasMissingInfo = AdvertParser.test(this);
 

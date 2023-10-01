@@ -1,48 +1,95 @@
-import type {EntityStatus, Offer, Platform, SalaryFrequency, SchedulerState, WatcherStatus} from "./enums";
+import type {OfferKind, OfferStatus, Platform, SalaryFrequency, SchedulerState, WatcherStatus} from "source:enums";
 
-export interface QueueEntry {
+export interface Resource {
 	url: string;
 	platform: Platform;
 	title: string;
 }
 
-export type EventCallback = {
-	tick: (percentage: number) => void;
-	scheduler: (state: SchedulerState, total: QueueEntry[]) => void;
-	next: (next: QueueEntry, total: QueueEntry[]) => void;
-	count: (count: number, currentEntry: QueueEntry) => void;
-	status: (status: WatcherStatus, currentEntry: QueueEntry) => void;
-	new: (entities: EntityOffer[], currentEntry: QueueEntry) => void;
-	list: (entities: EntityOffer[], currentEntry: QueueEntry) => void;
+export type GetItemsFilter = {
+	offset: number;
+	limit: number;
 };
 
-export type Salary = {
+export type OfferSalary = {
 	from: number;
-	frequency: SalaryFrequency;
 	to?: number;
 	currency?: string;
+	frequency: SalaryFrequency;
 };
 
-export type Price = {
+export type OfferPrice = {
 	amount: number;
 	currency?: string;
 };
 
-export interface EntityJobOffer {
-	salary?: Salary;
-}
-
-export interface EntityAdvertOffer {
-	price?: Price;
-}
-
-export interface EntityOffer extends EntityJobOffer, EntityAdvertOffer {
+export interface Offer {
 	id: string;
-	type: Offer;
+	type: OfferKind;
 	title: string;
-	status: EntityStatus;
+	status: OfferStatus;
 	anchor: string;
 	location: string;
-	datetime: string;
+	dateTime: string;
 	hasMissingInfo: boolean;
+	price?: OfferPrice;
+	salary?: OfferSalary;
 }
+
+interface QueueState {
+	resource: Resource;
+	queue: Resource[];
+}
+
+export interface ProgressEvent extends QueueState {
+	progress: number;
+}
+
+export interface SchedulerEvent extends QueueState {
+	state: SchedulerState;
+}
+
+export interface NextEvent extends QueueState {
+	next: Resource;
+}
+
+export interface CountEvent extends QueueState {
+	count: number;
+}
+
+export interface StatusEvent extends QueueState {
+	status: WatcherStatus;
+}
+
+export interface NewEvent extends QueueState {
+	offers: Offer[];
+}
+
+export interface ListEvent extends QueueState {
+	offers: Offer[];
+}
+
+export type EventCallback = {
+	new: (event: NewEvent) => void;
+	next: (event: NextEvent) => void;
+	status: (event: StatusEvent) => void;
+	progress: (event: ProgressEvent) => void;
+	scheduler: (event: SchedulerEvent) => void;
+};
+
+export type EnableScheduler = () => void;
+export type DisableScheduler = () => void;
+export type QueueResource = (resource: Resource) => void;
+export type DequeueResource = (resource: Resource | string) => void;
+
+export type UseNewEventHook = () => Partial<NewEvent>;
+export type UseNextEventHook = () => Partial<NextEvent>;
+export type UseStatusEventHook = () => Partial<StatusEvent>;
+export type UseProgressEventHook = () => Partial<ProgressEvent>;
+export type UseSchedulerEventHook = () => Partial<SchedulerEvent>;
+export type UseSchedulerCommandsHook = () => {
+	enable: EnableScheduler;
+	disable: DisableScheduler;
+	queueResource: QueueResource;
+	dequeueResource: DequeueResource;
+};

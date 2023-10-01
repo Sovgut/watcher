@@ -1,59 +1,70 @@
-import localforage from "localforage";
+import Dexie, {Table} from "dexie";
+import {GetItemsFilter, Offer} from "source:types";
 
-const INSTANCES_CACHE: Record<string, LocalForage> = {};
+export class RateLimitDatabase extends Dexie {
+	public limits!: Table<{id: string; timestamp: number}, string>;
 
-function createInstance(table: string): LocalForage {
-	if (INSTANCES_CACHE[table]) {
-		return INSTANCES_CACHE[table];
+	public constructor() {
+		super("rate-limit");
+		this.version(1).stores({
+			limits: "id,timestamp",
+		});
+	}
+}
+
+export class OffersDatabase extends Dexie {
+	public offers!: Table<Offer, string>;
+
+	public constructor(table: string) {
+		super(table);
+		this.version(1).stores({
+			offers: "id,type,title,status,anchor,location,dateTime,hasMissingInfo,price,salary",
+		});
+	}
+}
+
+export class Database {
+	public async getItem(table: string, key: string): Promise<Offer | undefined> {
+		const instance = new OffersDatabase(table);
+
+		return await instance.offers.get(key);
 	}
 
-	return (INSTANCES_CACHE[table] = localforage.createInstance({
-		driver: localforage.INDEXEDDB,
-		name: "@sovgut/watcher",
-		storeName: table,
-	}));
-}
+	public async getItems(table: string, filter?: Partial<GetItemsFilter>): Promise<Offer[]> {
+		const instance = new OffersDatabase(table);
 
-export async function getItem<T = unknown>(table: string, key: string): Promise<T> {
-	const instance = createInstance(table);
+		if (filter) {
+			let collection = instance.offers.toCollection();
 
-	return (await instance.getItem(key)) as T;
-}
+			if (filter.offset) {
+				collection = collection.offset(filter.offset);
+			}
 
-export async function getItems<T = unknown[]>(table: string): Promise<T> {
-	const instance = createInstance(table);
-	const items = [] as unknown[];
+			if (filter.limit) {
+				collection = collection.limit(filter.limit);
+			}
 
-	await instance.iterate((value) => {
-		items.push(value as unknown);
-	});
+			return await collection.toArray();
+		}
 
-	return items as T;
-}
+		return await instance.offers.orderBy("dateTime").toArray();
+	}
 
-export async function setItem(table: string, key: string, value: unknown): Promise<void> {
-	const instance = createInstance(table);
+	public async removeItem(table: string, key: string): Promise<void> {
+		const instance = new OffersDatabase(table);
 
-	await instance.setItem(key, value);
-}
+		return await instance.offers.delete(key);
+	}
 
-export async function removeItem(table: string, key: string): Promise<void> {
-	const instance = createInstance(table);
+	public async count(table: string): Promise<number> {
+		const instance = new OffersDatabase(table);
 
-	await instance.removeItem(key);
-}
+		return await instance.offers.count();
+	}
 
-export async function clear(table: string): Promise<void> {
-	const instance = createInstance(table);
+	public async clear(table: string): Promise<void> {
+		const instance = new OffersDatabase(table);
 
-	await instance.clear();
-	await instance.dropInstance();
-
-	delete INSTANCES_CACHE[table];
-}
-
-export async function length(table: string): Promise<number> {
-	const instance = createInstance(table);
-
-	return await instance.length();
+		return await instance.offers.clear();
+	}
 }

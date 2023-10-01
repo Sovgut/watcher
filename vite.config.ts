@@ -1,4 +1,5 @@
 import {defineConfig} from "vite";
+import tsconfigPaths from "vite-tsconfig-paths";
 
 export default defineConfig({
 	build: {
@@ -7,5 +8,15 @@ export default defineConfig({
 			name: "Watcher",
 		},
 		emptyOutDir: true,
+		rollupOptions: {
+			external: ["react", "react-dom"],
+			output: {
+				globals: {
+					react: "React",
+					"react-dom": "reactdom",
+				},
+			},
+		},
 	},
+	plugins: [tsconfigPaths()],
 });

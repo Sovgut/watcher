@@ -1,6 +1,6 @@
 import {DateTime} from "luxon";
 
-import type {EntityOffer, Price} from "../../../types";
+import type {Offer, OfferPrice} from "source:types";
 
 export function anchor(parent: Element): string {
 	const child = parent.querySelector("a");
@@ -49,8 +49,8 @@ export function location(parent: Element): string {
 	return _location.trim();
 }
 
-export function price(parent: Element): Price {
-	const price: Price = {
+export function price(parent: Element): OfferPrice {
+	const price: OfferPrice = {
 		amount: 0,
 	};
 
@@ -75,7 +75,7 @@ export function price(parent: Element): Price {
 	return price;
 }
 
-export function datetime(parent: Element): string {
+export function dateTime(parent: Element): string {
 	const child = parent.querySelector('[data-testid="location-date"]');
 	if (!child) {
 		return new Date().toISOString();
@@ -87,23 +87,23 @@ export function datetime(parent: Element): string {
 	}
 
 	let format = "dd MMMM yyyy";
-	let [, datetime] = text.split(" - ");
-	if (!datetime) {
+	let [, dateTime] = text.split(" - ");
+	if (!dateTime) {
 		return new Date().toISOString();
 	}
 
-	if (datetime.includes("г.") || datetime.includes("р.")) {
-		datetime = datetime.replace(" р.", String());
-		datetime = datetime.replace(" г.", String());
+	if (dateTime.includes("г.") || dateTime.includes("р.")) {
+		dateTime = dateTime.replace(" р.", String());
+		dateTime = dateTime.replace(" г.", String());
 	} else {
-		datetime = datetime.replace("Сьогодні о ", String());
-		datetime = datetime.replace("Сегодня в ", String());
+		dateTime = dateTime.replace("Сьогодні о ", String());
+		dateTime = dateTime.replace("Сегодня в ", String());
 
 		format = "HH:mm";
 	}
 
 	try {
-		return DateTime.fromFormat(datetime, format, {locale: "uk"})
+		return DateTime.fromFormat(dateTime, format, {locale: "uk"})
 			.plus({hours: (new Date().getTimezoneOffset() / 60) * -1})
 			.toJSDate()
 			.toISOString();
@@ -112,10 +112,10 @@ export function datetime(parent: Element): string {
 	}
 }
 
-export function test(entity: EntityOffer): boolean {
+export function test(entity: Offer): boolean {
 	let isCorrupted = false;
 
-	if (entity.datetime === String()) {
+	if (entity.dateTime === String()) {
 		isCorrupted = true;
 	}
 
