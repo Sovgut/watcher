@@ -34,6 +34,7 @@ export function load(parent: Document): Offer[] {
 class JobOffer implements Offer {
 	public id: string;
 	public type: OfferKind;
+	public img: string;
 	public title: string;
 	public anchor: string;
 	public location: string;
@@ -47,6 +48,7 @@ class JobOffer implements Offer {
 		this.type = type;
 
 		this.anchor = JobParser.anchor(parent);
+		this.img = JobParser.img(parent);
 		this.title = JobParser.title(parent);
 		this.location = JobParser.location(parent);
 		this.salary = JobParser.salary(parent);
@@ -60,6 +62,7 @@ class JobOffer implements Offer {
 class AdvertOffer implements Offer {
 	public id: string;
 	public type: OfferKind;
+	public img: string;
 	public title: string;
 	public anchor: string;
 	public location: string;
@@ -73,6 +76,7 @@ class AdvertOffer implements Offer {
 		this.type = type;
 
 		this.anchor = AdvertParser.anchor(parent);
+		this.img = AdvertParser.img(parent);
 		this.title = AdvertParser.title(parent);
 		this.location = AdvertParser.location(parent);
 		this.dateTime = AdvertParser.dateTime(parent);

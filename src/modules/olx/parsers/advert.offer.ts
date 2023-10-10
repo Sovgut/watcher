@@ -16,6 +16,20 @@ export function anchor(parent: Element): string {
 	return href;
 }
 
+export function img(parent: Element): string {
+	const child = parent.querySelector("img");
+	if (!child) {
+		return String();
+	}
+
+	const src = child.getAttribute("src");
+	if (!src) {
+		return String();
+	}
+
+	return src;
+}
+
 export function title(parent: Element): string {
 	const child = parent.querySelector("h6");
 	if (!child) {

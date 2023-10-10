@@ -99,6 +99,7 @@ export type OfferPrice = {
 export interface Offer {
 	id: string;
 	type: OfferKind;
+	img: string;
 	title: string;
 	status: OfferStatus;
 	anchor: string;
