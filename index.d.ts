@@ -158,4 +158,5 @@ export namespace Watcher {
 	export const database: Database;
 	export const observer: Observer;
 	export const scheduler: Scheduler;
+	export let REQUEST_FUNCTION: (url: string) => Promise<string | undefined>;
 }

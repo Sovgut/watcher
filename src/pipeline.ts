@@ -1,10 +1,9 @@
 import {MIN_RATE_LIMIT} from "source:constants";
 import {Platform, WatcherStatus} from "source:enums";
-import {observer} from "source:instances";
+import {REQUEST_FUNCTION, observer} from "source:instances";
 import {load as OLXLoad} from "source:modules/olx";
 import {SCHEDULER_QUEUE} from "source:scheduler";
 import {hashUrl} from "source:utils/hash-url";
-import {requestWorker} from "source:workers";
 
 import {OffersDatabase, RateLimitDatabase} from "source:database";
 import type {Offer, Resource} from "source:types";
@@ -47,7 +46,7 @@ export class Pipeline {
 				queue: SCHEDULER_QUEUE,
 			});
 
-			const html = await requestWorker.request(resource.url);
+			const html = await REQUEST_FUNCTION(resource.url);
 			if (!html) {
 				observer.emit("status", {
 					status: WatcherStatus.Error,

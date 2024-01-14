@@ -1,7 +1,7 @@
-import {database, observer, scheduler} from "source:instances";
+import {REQUEST_FUNCTION, database, observer, scheduler} from "source:instances";
 
 // Namespace
-export const Watcher = {scheduler, observer, database};
+export const Watcher = {scheduler, observer, database, REQUEST_FUNCTION};
 
 // Enums
 export {OfferKind, OfferStatus, Platform, SalaryFrequency, SchedulerState, WatcherStatus} from "source:enums";
